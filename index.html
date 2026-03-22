@@ -363,6 +363,124 @@
   .card-status.live   { background: rgba(35,134,54,0.2); color: #3fb950; border: 1px solid #238636; }
   .card-status.coming { background: rgba(139,148,158,0.1); color: var(--muted); border: 1px solid var(--border); }
 
+  /* ── Usage / instructions ── */
+  .usage {
+    margin-top: 48px;
+  }
+
+  .usage-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .param-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .param-table th {
+    text-align: left;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .param-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .param-table tr:last-child td { border-bottom: none; }
+
+  .param-table code {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 2px 6px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .param-table .param-desc {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .example-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 12px;
+    overflow-x: auto;
+  }
+
+  .example-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .example-url {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    word-break: break-all;
+    line-height: 1.6;
+  }
+
+  .example-url .param-key { color: var(--accent); }
+  .example-url .param-val { color: #3fb950; }
+
+  .usage-steps {
+    list-style: none;
+    counter-reset: step;
+    margin-bottom: 24px;
+  }
+
+  .usage-steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .usage-steps li::before {
+    content: counter(step);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
   .card-desc {
     font-size: 13px;
     color: var(--muted);
@@ -448,6 +566,7 @@
   <div class="nav-brand"><span>tdnathan</span> / jira-widgets</div>
   <ul class="nav-links">
     <li><a href="#widgets">Widgets</a></li>
+    <li><a href="#usage">Usage</a></li>
     <li><a href="https://github.com/tdnathan/jira-widgets" target="_blank">GitHub ↗</a></li>
   </ul>
 </nav>
@@ -480,23 +599,33 @@
       <div class="card-preview" style="background:#fff;">
         <div class="preview-countdown" id="previewCountdown">
           <div class="preview-group">
-            <div class="preview-digits" id="prev-days"></div>
-            <span class="preview-lbl">Days</span>
+            <div class="preview-digits" id="prev-mo"></div>
+            <span class="preview-lbl">Mo</span>
           </div>
           <div class="preview-colon"><div class="preview-colon-dot"></div><div class="preview-colon-dot"></div></div>
           <div class="preview-group">
-            <div class="preview-digits" id="prev-hrs"></div>
-            <span class="preview-lbl">Hours</span>
+            <div class="preview-digits" id="prev-wk"></div>
+            <span class="preview-lbl">Wk</span>
           </div>
           <div class="preview-colon"><div class="preview-colon-dot"></div><div class="preview-colon-dot"></div></div>
           <div class="preview-group">
-            <div class="preview-digits" id="prev-min"></div>
-            <span class="preview-lbl">Mins</span>
+            <div class="preview-digits" id="prev-dy"></div>
+            <span class="preview-lbl">Dy</span>
           </div>
           <div class="preview-colon"><div class="preview-colon-dot"></div><div class="preview-colon-dot"></div></div>
           <div class="preview-group">
-            <div class="preview-digits" id="prev-sec"></div>
-            <span class="preview-lbl">Secs</span>
+            <div class="preview-digits" id="prev-hr"></div>
+            <span class="preview-lbl">Hr</span>
+          </div>
+          <div class="preview-colon"><div class="preview-colon-dot"></div><div class="preview-colon-dot"></div></div>
+          <div class="preview-group">
+            <div class="preview-digits" id="prev-mn"></div>
+            <span class="preview-lbl">Mn</span>
+          </div>
+          <div class="preview-colon"><div class="preview-colon-dot"></div><div class="preview-colon-dot"></div></div>
+          <div class="preview-group">
+            <div class="preview-digits" id="prev-sc"></div>
+            <span class="preview-lbl">Sc</span>
           </div>
         </div>
       </div>
@@ -506,7 +635,7 @@
           <span class="card-status live">Live</span>
         </div>
         <p class="card-desc">
-          Flip-clock countdown showing days, hours, minutes and seconds to any target date.
+          Flip-clock countdown showing months, weeks, days, hours, minutes and seconds to any target date.
           Set title and target via URL params or the built-in settings panel.
         </p>
         <div class="card-footer">
@@ -546,6 +675,75 @@
     </div>
 
   </div>
+
+  <!-- ── Countdown Timer — Usage ── -->
+  <div class="usage" id="usage">
+    <div class="section-header">
+      <h2 class="section-title">Countdown Timer — Usage</h2>
+    </div>
+
+    <h3 class="usage-title">Adding to Jira</h3>
+    <ol class="usage-steps">
+      <li>Go to your Jira dashboard and click <strong style="color:var(--text)">Add gadget</strong>.</li>
+      <li>Search for <strong style="color:var(--text)">Webpage</strong> and add it (Jira Cloud may require a marketplace gadget).</li>
+      <li>Paste the widget URL with your desired parameters into the URL field.</li>
+      <li>Set the gadget height (recommended: <strong style="color:var(--text)">200–260px</strong>) and save.</li>
+    </ol>
+
+    <h3 class="usage-title">URL Parameters</h3>
+    <table class="param-table">
+      <thead>
+        <tr>
+          <th>Param</th>
+          <th>Required</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>title</code></td>
+          <td>No</td>
+          <td class="param-desc">Display title shown above the clock. Defaults to <code>Countdown</code>. Use <code>+</code> or <code>%20</code> for spaces.</td>
+        </tr>
+        <tr>
+          <td><code>target</code></td>
+          <td>No</td>
+          <td class="param-desc">Target date/time in ISO 8601 format. e.g. <code>2027-12-29T09:00</code>. If omitted, uses the last value set via the settings panel (stored in localStorage).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="usage-title">Examples</h3>
+
+    <div class="example-block">
+      <span class="example-label">Basic — title + target</span>
+      <div class="example-url">
+        countdown-timer.html?<span class="param-key">title</span>=<span class="param-val">Sprint+End</span>&amp;<span class="param-key">target</span>=<span class="param-val">2026-04-15T17:00</span>
+      </div>
+    </div>
+
+    <div class="example-block">
+      <span class="example-label">Release countdown</span>
+      <div class="example-url">
+        countdown-timer.html?<span class="param-key">title</span>=<span class="param-val">v2.0+Launch+In...</span>&amp;<span class="param-key">target</span>=<span class="param-val">2026-09-01T00:00</span>
+      </div>
+    </div>
+
+    <div class="example-block">
+      <span class="example-label">Full GitHub Pages URL (for Jira Webpage gadget)</span>
+      <div class="example-url">
+        https://tdnathan.github.io/jira-widgets/countdown-timer.html?<span class="param-key">title</span>=<span class="param-val">AJ2028+Begins+About...</span>&amp;<span class="param-key">target</span>=<span class="param-val">2027-12-29T09:00</span>
+      </div>
+    </div>
+
+    <div class="example-block">
+      <span class="example-label">No params — uses settings panel / localStorage</span>
+      <div class="example-url">
+        countdown-timer.html
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <footer>
@@ -592,15 +790,20 @@
   }
 
   function tickPreview() {
-    const diff = Math.max(0, previewTarget - new Date());
-    const days = Math.floor(diff / 86400000);
-    const hrs  = Math.floor((diff % 86400000) / 3600000);
-    const mins = Math.floor((diff % 3600000) / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-    setPreviewDigits('prev-days', days, 2);
-    setPreviewDigits('prev-hrs', hrs, 2);
-    setPreviewDigits('prev-min', mins, 2);
-    setPreviewDigits('prev-sec', secs, 2);
+    let rem = Math.max(0, previewTarget - new Date());
+    const MS_MON = 1000*60*60*24*30.4375, MS_WK = 1000*60*60*24*7, MS_DAY = 86400000, MS_HR = 3600000, MS_MIN = 60000;
+    const mo = Math.floor(rem / MS_MON);  rem -= mo * MS_MON;
+    const wk = Math.floor(rem / MS_WK);   rem -= wk * MS_WK;
+    const dy = Math.floor(rem / MS_DAY);  rem -= dy * MS_DAY;
+    const hr = Math.floor(rem / MS_HR);   rem -= hr * MS_HR;
+    const mn = Math.floor(rem / MS_MIN);  rem -= mn * MS_MIN;
+    const sc = Math.floor(rem / 1000);
+    setPreviewDigits('prev-mo', mo, 2);
+    setPreviewDigits('prev-wk', wk, 1);
+    setPreviewDigits('prev-dy', dy, 1);
+    setPreviewDigits('prev-hr', hr, 2);
+    setPreviewDigits('prev-mn', mn, 2);
+    setPreviewDigits('prev-sc', sc, 2);
   }
   tickPreview();
   setInterval(tickPreview, 1000);
