@@ -347,11 +347,6 @@
 
   <div class="countdown" id="countdown">
     <div class="digit-group">
-      <div class="digit-row" id="row-months"></div>
-      <span class="group-label">Months</span>
-    </div>
-    <div class="colon"><div class="colon-dot"></div><div class="colon-dot"></div></div>
-    <div class="digit-group">
       <div class="digit-row" id="row-weeks"></div>
       <span class="group-label">Weeks</span>
     </div>
@@ -476,10 +471,15 @@
     return card;
   }
 
+  let weekDigitCount = 2;
+
   function buildCards() {
+    const diff = targetDate ? Math.max(0, targetDate - new Date()) : 0;
+    const totalWeeks = Math.floor(diff / (86400000 * 7));
+    weekDigitCount = Math.max(2, String(totalWeeks).length);
+
     const rows = [
-      { id: 'row-months', prefix: 'd-mo', digits: 2 },
-      { id: 'row-weeks',  prefix: 'd-wk', digits: 1 },
+      { id: 'row-weeks',  prefix: 'd-wk', digits: weekDigitCount },
       { id: 'row-days',   prefix: 'd-dy', digits: 1 },
       { id: 'row-hours',  prefix: 'd-hr', digits: 2 },
       { id: 'row-mins',   prefix: 'd-mn', digits: 2 },
@@ -547,8 +547,7 @@
     const diff = targetDate - now;
 
     if (diff <= 0) {
-      setDigits('d-mo', 0, 2);
-      setDigits('d-wk', 0, 1);
+      setDigits('d-wk', 0, weekDigitCount);
       setDigits('d-dy', 0, 1);
       setDigits('d-hr', 0, 2);
       setDigits('d-mn', 0, 2);
@@ -558,23 +557,27 @@
       return;
     }
 
-    // Decompose into months, weeks, days, hours, mins, secs
+    // Decompose into weeks, days, hours, mins, secs
     const MS_MIN  = 60000;
     const MS_HR   = 3600000;
     const MS_DAY  = 86400000;
     const MS_WEEK = MS_DAY * 7;
-    const MS_MON  = MS_DAY * 30.4375;
 
     let rem = diff;
-    const months = Math.floor(rem / MS_MON);  rem -= months * MS_MON;
     const weeks  = Math.floor(rem / MS_WEEK);  rem -= weeks * MS_WEEK;
     const days   = Math.floor(rem / MS_DAY);   rem -= days * MS_DAY;
     const hours  = Math.floor(rem / MS_HR);    rem -= hours * MS_HR;
     const mins   = Math.floor(rem / MS_MIN);   rem -= mins * MS_MIN;
     const secs   = Math.floor(rem / 1000);
 
-    setDigits('d-mo', months, 2);
-    setDigits('d-wk', weeks, 1);
+    // Rebuild cards if week digit count changes
+    const needed = Math.max(2, String(weeks).length);
+    if (needed !== weekDigitCount) {
+      weekDigitCount = needed;
+      buildCards();
+    }
+
+    setDigits('d-wk', weeks, weekDigitCount);
     setDigits('d-dy', days, 1);
     setDigits('d-hr', hours, 2);
     setDigits('d-mn', mins, 2);

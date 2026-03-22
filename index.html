@@ -599,11 +599,6 @@
       <div class="card-preview" style="background:#fff;">
         <div class="preview-countdown" id="previewCountdown">
           <div class="preview-group">
-            <div class="preview-digits" id="prev-mo"></div>
-            <span class="preview-lbl">Mo</span>
-          </div>
-          <div class="preview-colon"><div class="preview-colon-dot"></div><div class="preview-colon-dot"></div></div>
-          <div class="preview-group">
             <div class="preview-digits" id="prev-wk"></div>
             <span class="preview-lbl">Wk</span>
           </div>
@@ -635,7 +630,7 @@
           <span class="card-status live">Live</span>
         </div>
         <p class="card-desc">
-          Flip-clock countdown showing months, weeks, days, hours, minutes and seconds to any target date.
+          Flip-clock countdown showing weeks, days, hours, minutes and seconds to any target date.
           Set title and target via URL params or the built-in settings panel.
         </p>
         <div class="card-footer">
@@ -791,15 +786,13 @@
 
   function tickPreview() {
     let rem = Math.max(0, previewTarget - new Date());
-    const MS_MON = 1000*60*60*24*30.4375, MS_WK = 1000*60*60*24*7, MS_DAY = 86400000, MS_HR = 3600000, MS_MIN = 60000;
-    const mo = Math.floor(rem / MS_MON);  rem -= mo * MS_MON;
+    const MS_WK = 1000*60*60*24*7, MS_DAY = 86400000, MS_HR = 3600000, MS_MIN = 60000;
     const wk = Math.floor(rem / MS_WK);   rem -= wk * MS_WK;
     const dy = Math.floor(rem / MS_DAY);  rem -= dy * MS_DAY;
     const hr = Math.floor(rem / MS_HR);   rem -= hr * MS_HR;
     const mn = Math.floor(rem / MS_MIN);  rem -= mn * MS_MIN;
     const sc = Math.floor(rem / 1000);
-    setPreviewDigits('prev-mo', mo, 2);
-    setPreviewDigits('prev-wk', wk, 1);
+    setPreviewDigits('prev-wk', wk, 2);
     setPreviewDigits('prev-dy', dy, 1);
     setPreviewDigits('prev-hr', hr, 2);
     setPreviewDigits('prev-mn', mn, 2);
