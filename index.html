@@ -229,34 +229,39 @@
     position: relative;
   }
 
-  /* Countdown preview — mini flip cards */
+  /* Countdown preview — mini individual digit cards */
   .preview-countdown {
     display: flex;
-    align-items: center;
-    gap: 5px;
+    align-items: flex-start;
+    gap: 4px;
   }
 
   .preview-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
   }
 
-  .preview-flip {
-    width: 30px;
-    height: 32px;
+  .preview-digits {
+    display: flex;
+    gap: 2px;
+  }
+
+  .preview-digit {
+    width: 18px;
+    height: 24px;
     position: relative;
-    border-radius: 3px;
+    border-radius: 2px;
     overflow: hidden;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text);
+    font-size: 14px;
+    font-weight: 900;
+    color: #fff;
   }
 
-  .preview-flip .pf-top,
-  .preview-flip .pf-bot {
+  .preview-digit .pd-top,
+  .preview-digit .pd-bot {
     position: absolute;
     left: 0; right: 0;
     height: 50%;
@@ -266,37 +271,46 @@
     overflow: hidden;
   }
 
-  .preview-flip .pf-top {
+  .preview-digit .pd-top {
     top: 0;
-    background: #1a1f27;
-    border-bottom: 1px solid rgba(0,0,0,0.4);
-    border-radius: 3px 3px 0 0;
+    background: #393939;
+    border-bottom: 1px solid rgba(0,0,0,0.35);
+    border-radius: 2px 2px 0 0;
     align-items: flex-end;
   }
 
-  .preview-flip .pf-top span { transform: translateY(50%); }
+  .preview-digit .pd-top span { transform: translateY(50%); line-height: 1; }
 
-  .preview-flip .pf-bot {
+  .preview-digit .pd-bot {
     bottom: 0;
-    background: #222830;
-    border-radius: 0 0 3px 3px;
+    background: #3e3e3e;
+    border-radius: 0 0 2px 2px;
     align-items: flex-start;
   }
 
-  .preview-flip .pf-bot span { transform: translateY(-50%); }
+  .preview-digit .pd-bot span { transform: translateY(-50%); line-height: 1; }
 
   .preview-lbl {
-    font-size: 7px;
-    letter-spacing: 0.12em;
+    font-size: 6px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
   }
 
-  .preview-sep {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    color: var(--border);
-    margin-top: -10px;
+  .preview-colon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 24px;
+  }
+
+  .preview-colon-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--muted);
   }
 
   /* Placeholder card preview */
@@ -463,19 +477,27 @@
 
     <!-- Countdown Timer -->
     <a class="card" href="./countdown-timer.html" target="_blank">
-      <div class="card-preview">
+      <div class="card-preview" style="background:#fff;">
         <div class="preview-countdown" id="previewCountdown">
-          <div class="preview-group"><div class="preview-flip"><div class="pf-top"><span id="pc-m">00</span></div><div class="pf-bot"><span id="pc-m2">00</span></div></div><span class="preview-lbl">Mo</span></div>
-          <span class="preview-sep">:</span>
-          <div class="preview-group"><div class="preview-flip"><div class="pf-top"><span id="pc-w">00</span></div><div class="pf-bot"><span id="pc-w2">00</span></div></div><span class="preview-lbl">Wk</span></div>
-          <span class="preview-sep">:</span>
-          <div class="preview-group"><div class="preview-flip"><div class="pf-top"><span id="pc-d">00</span></div><div class="pf-bot"><span id="pc-d2">00</span></div></div><span class="preview-lbl">Dy</span></div>
-          <span class="preview-sep">:</span>
-          <div class="preview-group"><div class="preview-flip"><div class="pf-top"><span id="pc-h">00</span></div><div class="pf-bot"><span id="pc-h2">00</span></div></div><span class="preview-lbl">Hr</span></div>
-          <span class="preview-sep">:</span>
-          <div class="preview-group"><div class="preview-flip"><div class="pf-top"><span id="pc-mi">00</span></div><div class="pf-bot"><span id="pc-mi2">00</span></div></div><span class="preview-lbl">Mn</span></div>
-          <span class="preview-sep">:</span>
-          <div class="preview-group"><div class="preview-flip"><div class="pf-top"><span id="pc-s">00</span></div><div class="pf-bot"><span id="pc-s2">00</span></div></div><span class="preview-lbl">Sc</span></div>
+          <div class="preview-group">
+            <div class="preview-digits" id="prev-days"></div>
+            <span class="preview-lbl">Days</span>
+          </div>
+          <div class="preview-colon"><div class="preview-colon-dot"></div><div class="preview-colon-dot"></div></div>
+          <div class="preview-group">
+            <div class="preview-digits" id="prev-hrs"></div>
+            <span class="preview-lbl">Hours</span>
+          </div>
+          <div class="preview-colon"><div class="preview-colon-dot"></div><div class="preview-colon-dot"></div></div>
+          <div class="preview-group">
+            <div class="preview-digits" id="prev-min"></div>
+            <span class="preview-lbl">Mins</span>
+          </div>
+          <div class="preview-colon"><div class="preview-colon-dot"></div><div class="preview-colon-dot"></div></div>
+          <div class="preview-group">
+            <div class="preview-digits" id="prev-sec"></div>
+            <span class="preview-lbl">Secs</span>
+          </div>
         </div>
       </div>
       <div class="card-body">
@@ -484,8 +506,8 @@
           <span class="card-status live">Live</span>
         </div>
         <p class="card-desc">
-          Counts down months, weeks, days, hours, minutes and seconds to any target date.
-          Includes a progress bar and editable label. Persists across page loads.
+          Flip-clock countdown showing days, hours, minutes and seconds to any target date.
+          Set title and target via URL params or the built-in settings panel.
         </p>
         <div class="card-footer">
           <div class="card-tags">
@@ -544,28 +566,41 @@
   updateClock();
   setInterval(updateClock, 1000);
 
-  // ── Live countdown preview ──
-  const PAD = n => String(Math.floor(n)).padStart(2, '0');
-
-  // Default preview target: 30 days from now
+  // ── Live countdown preview (individual digit cards) ──
   const previewTarget = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
+  function makeDigit(ch) {
+    const d = document.createElement('div');
+    d.className = 'preview-digit';
+    d.innerHTML = '<div class="pd-top"><span>' + ch + '</span></div><div class="pd-bot"><span>' + ch + '</span></div>';
+    return d;
+  }
+
+  function setPreviewDigits(containerId, value, minDigits) {
+    const str = String(value).padStart(minDigits, '0');
+    const el = document.getElementById(containerId);
+    if (el.children.length !== str.length) {
+      el.innerHTML = '';
+      for (const ch of str) el.appendChild(makeDigit(ch));
+    } else {
+      for (let i = 0; i < str.length; i++) {
+        const card = el.children[i];
+        card.querySelector('.pd-top span').textContent = str[i];
+        card.querySelector('.pd-bot span').textContent = str[i];
+      }
+    }
+  }
+
   function tickPreview() {
-    const diff = previewTarget - new Date();
-    if (diff <= 0) return;
-    let rem = diff;
-    const mo = Math.floor(rem / (1000*60*60*24*30.4375)); rem -= mo*(1000*60*60*24*30.4375);
-    const wk = Math.floor(rem / (1000*60*60*24*7));       rem -= wk*(1000*60*60*24*7);
-    const dy = Math.floor(rem / (1000*60*60*24));          rem -= dy*(1000*60*60*24);
-    const hr = Math.floor(rem / (1000*60*60));             rem -= hr*(1000*60*60);
-    const mn = Math.floor(rem / (1000*60));                rem -= mn*(1000*60);
-    const sc = Math.floor(rem / 1000);
-    document.getElementById('pc-m').textContent  = document.getElementById('pc-m2').textContent  = PAD(mo);
-    document.getElementById('pc-w').textContent  = document.getElementById('pc-w2').textContent  = PAD(wk);
-    document.getElementById('pc-d').textContent  = document.getElementById('pc-d2').textContent  = PAD(dy);
-    document.getElementById('pc-h').textContent  = document.getElementById('pc-h2').textContent  = PAD(hr);
-    document.getElementById('pc-mi').textContent = document.getElementById('pc-mi2').textContent = PAD(mn);
-    document.getElementById('pc-s').textContent  = document.getElementById('pc-s2').textContent  = PAD(sc);
+    const diff = Math.max(0, previewTarget - new Date());
+    const days = Math.floor(diff / 86400000);
+    const hrs  = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    setPreviewDigits('prev-days', days, 2);
+    setPreviewDigits('prev-hrs', hrs, 2);
+    setPreviewDigits('prev-min', mins, 2);
+    setPreviewDigits('prev-sec', secs, 2);
   }
   tickPreview();
   setInterval(tickPreview, 1000);

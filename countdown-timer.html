@@ -4,155 +4,121 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Countdown Timer</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --border: #30363d;
-    --accent: #00d9ff;
-    --accent2: #ff6b35;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --tick: #21262d;
-    --glow: rgba(0, 217, 255, 0.15);
-    --card-top: #1a1f27;
-    --card-bot: #222830;
-    --card-divider: rgba(0,0,0,0.4);
+    --bg: #ffffff;
+    --card-top: #393939;
+    --card-bot: #3e3e3e;
+    --card-text: #ffffff;
+    --card-divider: rgba(0,0,0,0.35);
+    --title-color: #1b2a4a;
+    --subtitle-color: #5a6a7a;
+    --label-color: #5a6a7a;
+    --accent: #2e8b57;
+    --accent-bar: #3aaf6e;
+    --dot-color: #1b2a4a;
+    --expired-color: #d9534f;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'Barlow Condensed', sans-serif;
+  html, body {
+    height: 100%;
+    font-family: 'Inter', -apple-system, sans-serif;
     background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
+    color: var(--title-color);
+  }
+
+  body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
   }
 
   .widget {
     width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
+    text-align: center;
     container-type: inline-size;
   }
 
-  /* ── Header ── */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
+  /* ── Accent bar ── */
+  .accent-bar {
+    height: 5px;
+    background: var(--accent-bar);
+    border-radius: 3px 3px 0 0;
+    margin-bottom: 20px;
   }
 
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  /* ── Title / subtitle ── */
+  .title {
+    font-size: clamp(14px, 3cqi, 28px);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--title-color);
+    margin-bottom: 4px;
   }
 
-  .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  .dot.expired { background: var(--accent2); box-shadow: 0 0 8px var(--accent2); animation: none; }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  .title-input {
-    background: transparent;
-    border: none;
-    outline: none;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
+  .subtitle {
+    font-size: clamp(10px, 1.8cqi, 16px);
+    font-weight: 400;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    width: 260px;
-    cursor: text;
+    color: var(--subtitle-color);
+    margin-bottom: clamp(16px, 3cqi, 32px);
   }
 
-  .title-input::placeholder { color: var(--muted); }
-
-  .btn-settings {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    color: var(--muted);
-    font-size: 13px;
-    padding: 5px 12px;
-    cursor: pointer;
-    font-family: 'Barlow Condensed', sans-serif;
-    letter-spacing: 0.05em;
-    transition: all 0.2s;
-  }
-
-  .btn-settings:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* ── Flip countdown ── */
+  /* ── Countdown row ── */
   .countdown {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 28px 20px;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    flex-wrap: nowrap;
-    gap: 0;
+    gap: clamp(2px, 0.8cqi, 8px);
+    padding: 0 clamp(4px, 1cqi, 16px);
     container-type: inline-size;
   }
 
-  .flip-group {
+  .digit-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    flex: 1 1 0;
-    min-width: 0;
   }
 
+  .digit-row {
+    display: flex;
+    gap: clamp(2px, 0.5cqi, 6px);
+  }
+
+  .group-label {
+    font-size: clamp(8px, 1.5cqi, 15px);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--label-color);
+    margin-top: clamp(4px, 0.8cqi, 10px);
+  }
+
+  /* ── Individual digit card ── */
   .flip-card {
     position: relative;
-    /* Width = 90% of the group so there's a small gutter */
-    width: 90%;
-    /* Aspect ratio keeps cards proportional as they scale */
-    aspect-ratio: 9 / 10;
-    perspective: 400px;
-    border-radius: 6px;
+    width: clamp(28px, 9cqi, 100px);
+    aspect-ratio: 3 / 4;
+    perspective: 600px;
+    border-radius: clamp(3px, 0.6cqi, 8px);
     overflow: visible;
-    font-family: 'Share Tech Mono', monospace;
-    /* Font scales with the card width via container-aware sizing */
-    font-size: clamp(20px, 5.5cqi, 52px);
-    font-weight: 700;
-    color: var(--text);
-    container-type: inline-size;
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(22px, 7.5cqi, 86px);
+    font-weight: 900;
+    color: var(--card-text);
   }
 
-  /* Top and bottom static halves */
   .flip-card .top,
   .flip-card .bottom {
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 0; right: 0;
     height: 50%;
     overflow: hidden;
-    background: var(--card-top);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -160,34 +126,34 @@
 
   .flip-card .top {
     top: 0;
-    border-radius: 6px 6px 0 0;
+    background: var(--card-top);
+    border-radius: clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px) 0 0;
     border-bottom: 1px solid var(--card-divider);
     align-items: flex-end;
-    padding-bottom: 0;
   }
 
   .flip-card .top span {
     transform: translateY(50%);
+    line-height: 1;
   }
 
   .flip-card .bottom {
     bottom: 0;
     background: var(--card-bot);
-    border-radius: 0 0 6px 6px;
+    border-radius: 0 0 clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px);
     align-items: flex-start;
-    padding-top: 0;
   }
 
   .flip-card .bottom span {
     transform: translateY(-50%);
+    line-height: 1;
   }
 
-  /* Flip panels (animated) */
+  /* ── Flip animation panels ── */
   .flip-card .flip-top,
   .flip-card .flip-bottom {
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 0; right: 0;
     height: 50%;
     overflow: hidden;
     display: flex;
@@ -200,7 +166,7 @@
   .flip-card .flip-top {
     top: 0;
     background: var(--card-top);
-    border-radius: 6px 6px 0 0;
+    border-radius: clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px) 0 0;
     border-bottom: 1px solid var(--card-divider);
     transform-origin: bottom center;
     z-index: 2;
@@ -209,12 +175,13 @@
 
   .flip-card .flip-top span {
     transform: translateY(50%);
+    line-height: 1;
   }
 
   .flip-card .flip-bottom {
     bottom: 0;
     background: var(--card-bot);
-    border-radius: 0 0 6px 6px;
+    border-radius: 0 0 clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px);
     transform-origin: top center;
     transform: rotateX(90deg);
     z-index: 2;
@@ -223,32 +190,29 @@
 
   .flip-card .flip-bottom span {
     transform: translateY(-50%);
+    line-height: 1;
   }
 
-  /* Shadow overlay on bottom half during flip */
   .flip-card .flip-shadow {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     height: 50%;
     background: rgba(0,0,0,0);
-    border-radius: 0 0 6px 6px;
+    border-radius: 0 0 clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px);
     z-index: 1;
     pointer-events: none;
   }
 
-  /* Flip animation */
   .flip-card.flipping .flip-top {
-    animation: flipTopDown 0.5s ease-in forwards;
+    animation: flipTopDown 0.45s ease-in forwards;
   }
 
   .flip-card.flipping .flip-bottom {
-    animation: flipBottomUp 0.5s 0.25s ease-out forwards;
+    animation: flipBottomUp 0.45s 0.22s ease-out forwards;
   }
 
   .flip-card.flipping .flip-shadow {
-    animation: shadowPulse 0.5s ease-in forwards;
+    animation: shadowPulse 0.45s ease-in forwards;
   }
 
   @keyframes flipTopDown {
@@ -263,101 +227,105 @@
 
   @keyframes shadowPulse {
     0%   { background: rgba(0,0,0,0); }
-    50%  { background: rgba(0,0,0,0.25); }
+    50%  { background: rgba(0,0,0,0.2); }
     100% { background: rgba(0,0,0,0); }
   }
 
-  .flip-label {
-    font-size: clamp(7px, 1.2cqi, 11px);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 600;
-  }
-
-  .flip-separator {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: clamp(16px, 3cqi, 36px);
-    color: var(--border);
-    margin-top: -12px;
-    user-select: none;
-    flex: 0 0 auto;
-    padding: 0 2px;
-  }
-
-  /* ── Progress bar ── */
-  .progress-row {
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .progress-meta {
+  /* ── Colon separator (two dots) ── */
+  .colon {
     display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-    margin-bottom: 8px;
-  }
-
-  .progress-track {
-    height: 4px;
-    background: var(--tick);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), #0099bb);
-    border-radius: 2px;
-    transition: width 1s linear;
-    box-shadow: 0 0 8px var(--glow);
-  }
-
-  /* ── Footer / date picker ── */
-  .footer {
-    padding: 14px 20px;
-    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: center;
+    gap: clamp(6px, 2cqi, 22px);
+    /* Vertically center with the cards (not the label) */
+    align-self: flex-start;
+    height: clamp(28px, 9cqi, 100px);
+    /* match card aspect ratio height */
+    aspect-ratio: auto;
+    padding: 0 clamp(1px, 0.4cqi, 4px);
   }
 
-  .footer label {
-    font-size: 11px;
-    letter-spacing: 0.08em;
+  /* Recalculate colon height from card dimensions */
+  .colon {
+    height: calc(clamp(28px, 9cqi, 100px) * 4 / 3);
+  }
+
+  .colon-dot {
+    width: clamp(4px, 1cqi, 10px);
+    height: clamp(4px, 1cqi, 10px);
+    border-radius: 50%;
+    background: var(--dot-color);
+  }
+
+  /* ── Expired ── */
+  .widget.is-expired .accent-bar { background: var(--expired-color); }
+  .widget.is-expired .title { color: var(--expired-color); }
+
+  /* ── Settings overlay ── */
+  .settings-toggle {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--subtitle-color);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+
+  .widget:hover .settings-toggle { opacity: 0.6; }
+  .settings-toggle:hover { opacity: 1 !important; }
+
+  .settings-panel {
+    display: none;
+    padding: 16px 20px;
+    background: #f5f6f8;
+    border-top: 1px solid #e0e3e8;
+    margin-top: clamp(12px, 2cqi, 24px);
+    border-radius: 6px;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .settings-panel.open { display: flex; }
+
+  .settings-panel label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
+    color: var(--subtitle-color);
   }
 
-  .date-input {
-    background: var(--bg);
-    border: 1px solid var(--border);
+  .settings-panel input[type="text"],
+  .settings-panel input[type="datetime-local"] {
+    background: #fff;
+    border: 1px solid #d0d5dd;
     border-radius: 5px;
-    color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: 13px;
     padding: 6px 10px;
     outline: none;
-    flex: 1;
-    max-width: 230px;
-    transition: border-color 0.2s;
-    color-scheme: dark;
+    color: var(--title-color);
   }
 
-  .date-input:focus { border-color: var(--accent); }
+  .settings-panel input:focus { border-color: var(--accent); }
 
   .btn-set {
-    background: var(--accent);
+    background: var(--accent-bar);
     border: none;
     border-radius: 5px;
-    color: var(--bg);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     padding: 7px 16px;
     cursor: pointer;
@@ -365,204 +333,214 @@
   }
 
   .btn-set:hover { opacity: 0.85; }
-
-  /* ── Expired state ── */
-  .expired-banner {
-    display: none;
-    padding: 14px 20px;
-    background: rgba(255, 107, 53, 0.08);
-    border-top: 1px solid rgba(255, 107, 53, 0.3);
-    text-align: center;
-    font-size: 13px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent2);
-    font-weight: 700;
-  }
-
-  .widget.is-expired .expired-banner { display: block; }
-  .widget.is-expired .dot { background: var(--accent2); box-shadow: 0 0 8px var(--accent2); animation: none; }
-  .widget.is-expired .progress-fill { background: var(--accent2); }
-
-  /* ── Container-query responsive tweaks ── */
-  @container (max-width: 400px) {
-    .countdown { padding: 16px 8px; }
-    .flip-separator { padding: 0 1px; }
-  }
 </style>
 </head>
 <body>
 
 <div class="widget" id="widget">
+  <div class="accent-bar"></div>
 
-  <div class="header">
-    <div class="header-left">
-      <div class="dot" id="dot"></div>
-      <input class="title-input" id="titleInput" type="text" value="Sprint End" maxlength="40" placeholder="Enter label…" />
-    </div>
-    <button class="btn-settings" onclick="toggleFooter()">&#9881; Set Target</button>
-  </div>
+  <button class="settings-toggle" onclick="toggleSettings()" title="Settings">&#9881;</button>
+
+  <div class="title" id="titleText">Countdown</div>
+  <div class="subtitle" id="subtitleText"></div>
 
   <div class="countdown" id="countdown">
-    <div class="flip-group">
-      <div class="flip-card" id="fc-months" data-value="00">
-        <div class="top"><span>00</span></div>
-        <div class="bottom"><span>00</span></div>
-      </div>
-      <span class="flip-label">Months</span>
+    <!-- Days (3 digits) -->
+    <div class="digit-group" id="grp-days">
+      <div class="digit-row" id="row-days"></div>
+      <span class="group-label">Days</span>
     </div>
-    <span class="flip-separator">:</span>
-    <div class="flip-group">
-      <div class="flip-card" id="fc-weeks" data-value="00">
-        <div class="top"><span>00</span></div>
-        <div class="bottom"><span>00</span></div>
-      </div>
-      <span class="flip-label">Weeks</span>
+    <div class="colon"><div class="colon-dot"></div><div class="colon-dot"></div></div>
+    <!-- Hours (2 digits) -->
+    <div class="digit-group">
+      <div class="digit-row" id="row-hours"></div>
+      <span class="group-label">Hours</span>
     </div>
-    <span class="flip-separator">:</span>
-    <div class="flip-group">
-      <div class="flip-card" id="fc-days" data-value="00">
-        <div class="top"><span>00</span></div>
-        <div class="bottom"><span>00</span></div>
-      </div>
-      <span class="flip-label">Days</span>
+    <div class="colon"><div class="colon-dot"></div><div class="colon-dot"></div></div>
+    <!-- Minutes (2 digits) -->
+    <div class="digit-group">
+      <div class="digit-row" id="row-mins"></div>
+      <span class="group-label">Minutes</span>
     </div>
-    <span class="flip-separator">:</span>
-    <div class="flip-group">
-      <div class="flip-card" id="fc-hours" data-value="00">
-        <div class="top"><span>00</span></div>
-        <div class="bottom"><span>00</span></div>
-      </div>
-      <span class="flip-label">Hours</span>
-    </div>
-    <span class="flip-separator">:</span>
-    <div class="flip-group">
-      <div class="flip-card" id="fc-mins" data-value="00">
-        <div class="top"><span>00</span></div>
-        <div class="bottom"><span>00</span></div>
-      </div>
-      <span class="flip-label">Mins</span>
-    </div>
-    <span class="flip-separator">:</span>
-    <div class="flip-group">
-      <div class="flip-card" id="fc-secs" data-value="00">
-        <div class="top"><span>00</span></div>
-        <div class="bottom"><span>00</span></div>
-      </div>
-      <span class="flip-label">Secs</span>
+    <div class="colon"><div class="colon-dot"></div><div class="colon-dot"></div></div>
+    <!-- Seconds (2 digits) -->
+    <div class="digit-group">
+      <div class="digit-row" id="row-secs"></div>
+      <span class="group-label">Seconds</span>
     </div>
   </div>
 
-  <div class="progress-row">
-    <div class="progress-meta">
-      <span id="startLabel">Started</span>
-      <span id="pctLabel">0% elapsed</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill" style="width:0%"></div>
-    </div>
+  <div class="settings-panel" id="settingsPanel">
+    <label>Title</label>
+    <input type="text" id="inputTitle" placeholder="Title..." />
+    <label>Target</label>
+    <input type="datetime-local" id="inputDate" />
+    <button class="btn-set" onclick="applySettings()">Set</button>
   </div>
 
-  <div class="footer" id="footerPanel" style="display:none">
-    <label for="dateInput">Target</label>
-    <input class="date-input" type="datetime-local" id="dateInput" />
-    <button class="btn-set" onclick="applyTarget()">Set</button>
+  <div class="expired-text" id="expiredText" style="display:none; margin-top:16px; font-weight:700; color:var(--expired-color); letter-spacing:0.08em; text-transform:uppercase; font-size:clamp(10px, 1.6cqi, 16px);">
+    Deadline reached
   </div>
-
-  <div class="expired-banner">&#9873; Deadline reached</div>
 </div>
 
 <script>
-  const PAD = n => String(Math.floor(n)).padStart(2, '0');
-  const KEY = 'jira_countdown_v2';
-
+  const KEY = 'jira_countdown_v3';
   let targetDate = null;
-  let startDate  = null;
+  let titleText  = 'Countdown';
 
-  // ── Load persisted state ──
-  try {
-    const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
-    if (saved.target) {
-      targetDate = new Date(saved.target);
-      startDate  = saved.start ? new Date(saved.start) : new Date();
-      document.getElementById('titleInput').value = saved.title || 'Sprint End';
-      document.getElementById('dateInput').value   = saved.target.slice(0, 16);
-    }
-  } catch(e) {}
+  // ── URL params override everything ──
+  const params = new URLSearchParams(window.location.search);
+  const paramTitle  = params.get('title');
+  const paramTarget = params.get('target');
+
+  // ── Load state: URL params > localStorage ──
+  if (paramTarget) {
+    targetDate = new Date(paramTarget);
+    titleText  = paramTitle || 'Countdown';
+  } else {
+    try {
+      const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+      if (saved.target) {
+        targetDate = new Date(saved.target);
+        titleText  = saved.title || 'Countdown';
+      }
+    } catch(e) {}
+  }
+
+  if (paramTitle) titleText = paramTitle;
+
+  document.getElementById('titleText').textContent = titleText;
+
+  if (targetDate) {
+    document.getElementById('inputDate').value = targetDate.toISOString().slice(0, 16);
+    updateSubtitle();
+  }
+  document.getElementById('inputTitle').value = titleText;
 
   function save() {
     if (!targetDate) return;
     localStorage.setItem(KEY, JSON.stringify({
       target: targetDate.toISOString(),
-      start:  startDate?.toISOString(),
-      title:  document.getElementById('titleInput').value
+      title:  titleText
     }));
   }
 
-  document.getElementById('titleInput').addEventListener('input', save);
-
-  function toggleFooter() {
-    const fp = document.getElementById('footerPanel');
-    fp.style.display = fp.style.display === 'none' ? 'flex' : 'none';
+  function updateSubtitle() {
+    if (!targetDate) return;
+    const d = targetDate;
+    const day = d.getDate();
+    const suffix = [,'st','nd','rd'][day % 10 > 3 ? 0 : (day % 100 - day % 10 !== 10) * (day % 10)] || 'th';
+    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('subtitleText').textContent =
+      day + suffix + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear() + ' ' + hh + ':' + mm;
   }
 
-  function applyTarget() {
-    const v = document.getElementById('dateInput').value;
+  function toggleSettings() {
+    document.getElementById('settingsPanel').classList.toggle('open');
+  }
+
+  function applySettings() {
+    const v = document.getElementById('inputDate').value;
+    const t = document.getElementById('inputTitle').value.trim();
     if (!v) return;
     targetDate = new Date(v);
-    startDate  = new Date();
-    document.getElementById('footerPanel').style.display = 'none';
+    titleText  = t || 'Countdown';
+    document.getElementById('titleText').textContent = titleText;
+    document.getElementById('settingsPanel').classList.remove('open');
     document.getElementById('widget').classList.remove('is-expired');
+    document.getElementById('expiredText').style.display = 'none';
+    updateSubtitle();
     save();
+    buildCards();
     tick();
   }
 
-  // ── Flip a card to a new value ──
-  function flipTo(id, newVal) {
-    const card = document.getElementById('fc-' + id);
-    const oldVal = card.getAttribute('data-value');
-    if (oldVal === newVal) return;
+  // ── Build individual digit cards dynamically ──
+  function makeCard(id) {
+    const card = document.createElement('div');
+    card.className = 'flip-card';
+    card.id = id;
+    card.setAttribute('data-value', '0');
+    card.innerHTML =
+      '<div class="top"><span>0</span></div>' +
+      '<div class="bottom"><span>0</span></div>';
+    return card;
+  }
 
-    card.setAttribute('data-value', newVal);
+  function buildCards() {
+    // Determine how many day digits we need (minimum 1)
+    const diff = targetDate ? Math.max(0, targetDate - new Date()) : 0;
+    const totalDays = Math.floor(diff / 86400000);
+    const dayDigits = Math.max(1, String(totalDays).length);
 
-    // Static halves show the new value underneath
-    card.querySelector('.top span').textContent = newVal;
-    card.querySelector('.bottom span').textContent = newVal;
+    const rowDays  = document.getElementById('row-days');
+    const rowHours = document.getElementById('row-hours');
+    const rowMins  = document.getElementById('row-mins');
+    const rowSecs  = document.getElementById('row-secs');
 
-    // Remove any previous flip panels
+    rowDays.innerHTML = '';
+    rowHours.innerHTML = '';
+    rowMins.innerHTML = '';
+    rowSecs.innerHTML = '';
+
+    for (let i = 0; i < dayDigits; i++) rowDays.appendChild(makeCard('d-d' + i));
+    for (let i = 0; i < 2; i++) rowHours.appendChild(makeCard('d-h' + i));
+    for (let i = 0; i < 2; i++) rowMins.appendChild(makeCard('d-m' + i));
+    for (let i = 0; i < 2; i++) rowSecs.appendChild(makeCard('d-s' + i));
+  }
+
+  // ── Flip a single digit card ──
+  function flipDigit(id, newChar) {
+    const card = document.getElementById(id);
+    if (!card) return;
+    const oldChar = card.getAttribute('data-value');
+    if (oldChar === newChar) return;
+
+    card.setAttribute('data-value', newChar);
+    card.querySelector('.top span').textContent = newChar;
+    card.querySelector('.bottom span').textContent = newChar;
+
     card.querySelectorAll('.flip-top, .flip-bottom, .flip-shadow').forEach(el => el.remove());
     card.classList.remove('flipping');
 
-    // Create flip-top (shows old value, flips away)
-    const flipTop = document.createElement('div');
-    flipTop.className = 'flip-top';
-    flipTop.innerHTML = '<span>' + oldVal + '</span>';
+    const ft = document.createElement('div');
+    ft.className = 'flip-top';
+    ft.innerHTML = '<span>' + oldChar + '</span>';
 
-    // Create flip-bottom (shows new value, flips in)
-    const flipBot = document.createElement('div');
-    flipBot.className = 'flip-bottom';
-    flipBot.innerHTML = '<span>' + newVal + '</span>';
+    const fb = document.createElement('div');
+    fb.className = 'flip-bottom';
+    fb.innerHTML = '<span>' + newChar + '</span>';
 
-    // Shadow overlay
-    const shadow = document.createElement('div');
-    shadow.className = 'flip-shadow';
+    const sh = document.createElement('div');
+    sh.className = 'flip-shadow';
 
-    card.appendChild(flipTop);
-    card.appendChild(flipBot);
-    card.appendChild(shadow);
+    card.appendChild(ft);
+    card.appendChild(fb);
+    card.appendChild(sh);
 
-    // Trigger animation
     void card.offsetWidth;
     card.classList.add('flipping');
 
-    // Cleanup after animation
     setTimeout(() => {
       card.classList.remove('flipping');
-      flipTop.remove();
-      flipBot.remove();
-      shadow.remove();
-    }, 800);
+      ft.remove();
+      fb.remove();
+      sh.remove();
+    }, 700);
   }
+
+  // ── Set digits for a group ──
+  function setDigits(prefix, value, count) {
+    const str = String(value).padStart(count, '0');
+    for (let i = 0; i < count; i++) {
+      flipDigit(prefix + i, str[i]);
+    }
+  }
+
+  let dayDigitCount = 1;
 
   function tick() {
     if (!targetDate) return;
@@ -571,50 +549,35 @@
     const diff = targetDate - now;
 
     if (diff <= 0) {
-      ['months','weeks','days','hours','mins','secs'].forEach(k => {
-        flipTo(k, '00');
-      });
+      setDigits('d-d', 0, dayDigitCount);
+      setDigits('d-h', 0, 2);
+      setDigits('d-m', 0, 2);
+      setDigits('d-s', 0, 2);
       document.getElementById('widget').classList.add('is-expired');
-      document.getElementById('progressFill').style.width = '100%';
-      document.getElementById('pctLabel').textContent = '100% elapsed';
+      document.getElementById('expiredText').style.display = 'block';
       return;
     }
 
-    document.getElementById('widget').classList.remove('is-expired');
+    const totalDays = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins  = Math.floor((diff % 3600000) / 60000);
+    const secs  = Math.floor((diff % 60000) / 1000);
 
-    // Decompose
-    let rem = diff;
-    const months = Math.floor(rem / (1000 * 60 * 60 * 24 * 30.4375));
-    rem -= months * (1000 * 60 * 60 * 24 * 30.4375);
-    const weeks  = Math.floor(rem / (1000 * 60 * 60 * 24 * 7));
-    rem -= weeks  * (1000 * 60 * 60 * 24 * 7);
-    const days   = Math.floor(rem / (1000 * 60 * 60 * 24));
-    rem -= days   * (1000 * 60 * 60 * 24);
-    const hours  = Math.floor(rem / (1000 * 60 * 60));
-    rem -= hours  * (1000 * 60 * 60);
-    const mins   = Math.floor(rem / (1000 * 60));
-    rem -= mins   * (1000 * 60);
-    const secs   = Math.floor(rem / 1000);
-
-    flipTo('months', PAD(months));
-    flipTo('weeks',  PAD(weeks));
-    flipTo('days',   PAD(days));
-    flipTo('hours',  PAD(hours));
-    flipTo('mins',   PAD(mins));
-    flipTo('secs',   PAD(secs));
-
-    // Progress bar
-    if (startDate) {
-      const total   = targetDate - startDate;
-      const elapsed = now - startDate;
-      const pct     = Math.min(100, Math.max(0, (elapsed / total) * 100));
-      document.getElementById('progressFill').style.width = pct.toFixed(2) + '%';
-      document.getElementById('pctLabel').textContent     = pct.toFixed(1) + '% elapsed';
-      document.getElementById('startLabel').textContent   =
-        'From ' + startDate.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' });
+    // Rebuild cards if day digit count changes
+    const needed = Math.max(1, String(totalDays).length);
+    if (needed !== dayDigitCount) {
+      dayDigitCount = needed;
+      buildCards();
     }
+
+    setDigits('d-d', totalDays, dayDigitCount);
+    setDigits('d-h', hours, 2);
+    setDigits('d-m', mins, 2);
+    setDigits('d-s', secs, 2);
   }
 
+  // ── Init ──
+  buildCards();
   tick();
   setInterval(tick, 1000);
 </script>
