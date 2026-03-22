@@ -76,7 +76,7 @@
     align-items: flex-start;
     justify-content: center;
     gap: clamp(2px, 0.8cqi, 8px);
-    padding: 0 clamp(4px, 1cqi, 16px);
+    padding: 0 clamp(16px, 4cqi, 48px);
     container-type: inline-size;
   }
 
@@ -105,7 +105,7 @@
     width: clamp(28px, 9cqi, 100px);
     aspect-ratio: 3 / 4;
     perspective: 600px;
-    border-radius: clamp(3px, 0.6cqi, 8px);
+    border-radius: clamp(6px, 1.2cqi, 14px);
     overflow: visible;
     font-family: 'Inter', sans-serif;
     font-size: clamp(22px, 7.5cqi, 86px);
@@ -127,7 +127,7 @@
   .flip-card .top {
     top: 0;
     background: var(--card-top);
-    border-radius: clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px) 0 0;
+    border-radius: clamp(6px, 1.2cqi, 14px) clamp(6px, 1.2cqi, 14px) 0 0;
     border-bottom: 1px solid var(--card-divider);
     align-items: flex-end;
   }
@@ -140,7 +140,7 @@
   .flip-card .bottom {
     bottom: 0;
     background: var(--card-bot);
-    border-radius: 0 0 clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px);
+    border-radius: 0 0 clamp(6px, 1.2cqi, 14px) clamp(6px, 1.2cqi, 14px);
     align-items: flex-start;
   }
 
@@ -166,7 +166,7 @@
   .flip-card .flip-top {
     top: 0;
     background: var(--card-top);
-    border-radius: clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px) 0 0;
+    border-radius: clamp(6px, 1.2cqi, 14px) clamp(6px, 1.2cqi, 14px) 0 0;
     border-bottom: 1px solid var(--card-divider);
     transform-origin: bottom center;
     z-index: 2;
@@ -181,7 +181,7 @@
   .flip-card .flip-bottom {
     bottom: 0;
     background: var(--card-bot);
-    border-radius: 0 0 clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px);
+    border-radius: 0 0 clamp(6px, 1.2cqi, 14px) clamp(6px, 1.2cqi, 14px);
     transform-origin: top center;
     transform: rotateX(90deg);
     z-index: 2;
@@ -198,7 +198,7 @@
     bottom: 0; left: 0; right: 0;
     height: 50%;
     background: rgba(0,0,0,0);
-    border-radius: 0 0 clamp(3px, 0.6cqi, 8px) clamp(3px, 0.6cqi, 8px);
+    border-radius: 0 0 clamp(6px, 1.2cqi, 14px) clamp(6px, 1.2cqi, 14px);
     z-index: 1;
     pointer-events: none;
   }
