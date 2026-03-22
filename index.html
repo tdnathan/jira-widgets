@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tdnathan / jira-widgets</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0d1117;
+    --surface:  #161b22;
+    --border:   #30363d;
+    --accent:   #00d9ff;
+    --accent2:  #ff6b35;
+    --text:     #e6edf3;
+    --muted:    #8b949e;
+    --glow:     rgba(0,217,255,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── grid noise overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,217,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,217,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 56px;
+    background: rgba(13,17,23,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-brand {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  .nav-brand span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding: 100px 40px 80px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-size: clamp(40px, 7vw, 72px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  h1 .line2 {
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-desc {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 520px;
+    font-weight: 400;
+    margin-bottom: 40px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .badge.green { border-color: #238636; color: #3fb950; }
+
+  /* ── Section ── */
+  .section {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 40px 100px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .count {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── Widget cards ── */
+  .widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    animation: fadeUp 0.5s ease both;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 28px var(--glow);
+    transform: translateY(-3px);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.12s; }
+  .card:nth-child(3) { animation-delay: 0.19s; }
+
+  .card-preview {
+    height: 90px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 20px;
+    gap: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Countdown preview */
+  .preview-countdown {
+    display: flex;
+    gap: 6px;
+  }
+
+  .preview-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .preview-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 20px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .preview-lbl {
+    font-size: 7px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .preview-sep {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18px;
+    color: var(--border);
+    align-self: flex-start;
+    padding-top: 1px;
+  }
+
+  /* Placeholder card preview */
+  .preview-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.3;
+  }
+
+  .preview-placeholder .icon {
+    font-size: 28px;
+  }
+
+  .preview-placeholder span {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .card-body {
+    padding: 18px 20px;
+  }
+
+  .card-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .card-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+
+  .card-status.live   { background: rgba(35,134,54,0.2); color: #3fb950; border: 1px solid #238636; }
+  .card-status.coming { background: rgba(139,148,158,0.1); color: var(--muted); border: 1px solid var(--border); }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 2px 7px;
+  }
+
+  .card-link {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: gap 0.2s;
+  }
+
+  .card:hover .card-link { gap: 8px; }
+
+  /* ── Footer ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  footer p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ── Live clock ── */
+  #liveClock {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand"><span>tdnathan</span> / jira-widgets</div>
+  <ul class="nav-links">
+    <li><a href="#widgets">Widgets</a></li>
+    <li><a href="https://github.com/tdnathan/jira-widgets" target="_blank">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="hero-tag">GitHub Pages · Public</div>
+  <h1>Jira<span class="line2">Dashboard Widgets</span></h1>
+  <p class="hero-desc">
+    A collection of self-contained HTML widgets built for embedding into
+    Jira dashboards via the Webpage gadget. No frameworks, no dependencies —
+    just drop the URL in and go.
+  </p>
+  <div class="hero-meta">
+    <span class="badge green">● Live</span>
+    <span class="badge">HTML · Vanilla JS</span>
+    <span class="badge">tdnathan</span>
+  </div>
+</header>
+
+<main class="section" id="widgets">
+  <div class="section-header">
+    <h2 class="section-title">Available Widgets</h2>
+    <span class="count" id="widgetCount">1 widget</span>
+  </div>
+
+  <div class="widgets">
+
+    <!-- Countdown Timer -->
+    <a class="card" href="./countdown-timer.html" target="_blank">
+      <div class="card-preview">
+        <div class="preview-countdown" id="previewCountdown">
+          <div class="preview-unit"><span class="preview-val" id="pc-m">00</span><span class="preview-lbl">Mo</span></div>
+          <span class="preview-sep">·</span>
+          <div class="preview-unit"><span class="preview-val" id="pc-w">00</span><span class="preview-lbl">Wk</span></div>
+          <span class="preview-sep">·</span>
+          <div class="preview-unit"><span class="preview-val" id="pc-d">00</span><span class="preview-lbl">Dy</span></div>
+          <span class="preview-sep">·</span>
+          <div class="preview-unit"><span class="preview-val" id="pc-h">00</span><span class="preview-lbl">Hr</span></div>
+          <span class="preview-sep">·</span>
+          <div class="preview-unit"><span class="preview-val" id="pc-mi">00</span><span class="preview-lbl">Mn</span></div>
+          <span class="preview-sep">·</span>
+          <div class="preview-unit"><span class="preview-val" id="pc-s">00</span><span class="preview-lbl">Sc</span></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">Countdown Timer</span>
+          <span class="card-status live">Live</span>
+        </div>
+        <p class="card-desc">
+          Counts down months, weeks, days, hours, minutes and seconds to any target date.
+          Includes a progress bar and editable label. Persists across page loads.
+        </p>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">timer</span>
+            <span class="tag">deadline</span>
+            <span class="tag">sprint</span>
+          </div>
+          <span class="card-link">Open ›</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Placeholder 2 -->
+    <div class="card" style="cursor:default; opacity:0.5;">
+      <div class="card-preview">
+        <div class="preview-placeholder">
+          <div class="icon">📊</div>
+          <span>Coming soon</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">Sprint Burndown</span>
+          <span class="card-status coming">Planned</span>
+        </div>
+        <p class="card-desc">
+          Visual burndown chart for tracking sprint progress against the ideal line.
+        </p>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="tag">chart</span>
+            <span class="tag">sprint</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <p>
+    <a href="https://github.com/tdnathan/jira-widgets" target="_blank">github.com/tdnathan/jira-widgets</a>
+    &nbsp;·&nbsp; MIT Licence
+  </p>
+  <span id="liveClock"></span>
+</footer>
+
+<script>
+  // ── Live clock in footer ──
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('liveClock').textContent =
+      now.toLocaleTimeString('en-AU', { hour12: false });
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── Live countdown preview ──
+  const PAD = n => String(Math.floor(n)).padStart(2, '0');
+
+  // Default preview target: 30 days from now
+  const previewTarget = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+  function tickPreview() {
+    const diff = previewTarget - new Date();
+    if (diff <= 0) return;
+    let rem = diff;
+    const mo = Math.floor(rem / (1000*60*60*24*30.4375)); rem -= mo*(1000*60*60*24*30.4375);
+    const wk = Math.floor(rem / (1000*60*60*24*7));       rem -= wk*(1000*60*60*24*7);
+    const dy = Math.floor(rem / (1000*60*60*24));          rem -= dy*(1000*60*60*24);
+    const hr = Math.floor(rem / (1000*60*60));             rem -= hr*(1000*60*60);
+    const mn = Math.floor(rem / (1000*60));                rem -= mn*(1000*60);
+    const sc = Math.floor(rem / 1000);
+    document.getElementById('pc-m').textContent  = PAD(mo);
+    document.getElementById('pc-w').textContent  = PAD(wk);
+    document.getElementById('pc-d').textContent  = PAD(dy);
+    document.getElementById('pc-h').textContent  = PAD(hr);
+    document.getElementById('pc-mi').textContent = PAD(mn);
+    document.getElementById('pc-s').textContent  = PAD(sc);
+  }
+  tickPreview();
+  setInterval(tickPreview, 1000);
+</script>
+</body>
+</html>
