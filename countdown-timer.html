@@ -411,6 +411,11 @@
 
   if (paramTitle) titleText = paramTitle;
 
+  // Hide settings when URL params are provided
+  if (paramTarget || paramTitle) {
+    document.querySelector('.settings-toggle').style.display = 'none';
+  }
+
   document.getElementById('titleText').textContent = titleText;
 
   if (targetDate) {
@@ -480,7 +485,7 @@
 
     const rows = [
       { id: 'row-weeks',  prefix: 'd-wk', digits: weekDigitCount },
-      { id: 'row-days',   prefix: 'd-dy', digits: 1 },
+      { id: 'row-days',   prefix: 'd-dy', digits: 2 },
       { id: 'row-hours',  prefix: 'd-hr', digits: 2 },
       { id: 'row-mins',   prefix: 'd-mn', digits: 2 },
       { id: 'row-secs',   prefix: 'd-sc', digits: 2 },
@@ -548,7 +553,7 @@
 
     if (diff <= 0) {
       setDigits('d-wk', 0, weekDigitCount);
-      setDigits('d-dy', 0, 1);
+      setDigits('d-dy', 0, 2);
       setDigits('d-hr', 0, 2);
       setDigits('d-mn', 0, 2);
       setDigits('d-sc', 0, 2);
@@ -578,7 +583,7 @@
     }
 
     setDigits('d-wk', weeks, weekDigitCount);
-    setDigits('d-dy', days, 1);
+    setDigits('d-dy', days, 2);
     setDigits('d-hr', hours, 2);
     setDigits('d-mn', mins, 2);
     setDigits('d-sc', secs, 2);
