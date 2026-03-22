@@ -16,6 +16,9 @@
     --muted: #8b949e;
     --tick: #21262d;
     --glow: rgba(0, 217, 255, 0.15);
+    --card-top: #1a1f27;
+    --card-bot: #222830;
+    --card-divider: rgba(0,0,0,0.4);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,7 +36,7 @@
 
   .widget {
     width: 100%;
-    max-width: 640px;
+    max-width: 680px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -102,61 +105,175 @@
 
   .btn-settings:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* ── Countdown grid ── */
+  /* ── Flip countdown ── */
   .countdown {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 1px;
-    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 28px 20px;
+    background: var(--bg);
     border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
   }
 
-  .unit {
-    background: var(--surface);
-    padding: 20px 10px 16px;
-    text-align: center;
+  .flip-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .flip-card {
     position: relative;
-    overflow: hidden;
-  }
-
-  .unit::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .unit.ticking::before { opacity: 1; }
-
-  .value {
+    width: 72px;
+    height: 80px;
+    perspective: 400px;
+    border-radius: 6px;
+    overflow: visible;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 32px;
-    line-height: 1;
+    font-size: 44px;
+    font-weight: 700;
     color: var(--text);
-    display: block;
-    margin-bottom: 8px;
-    transition: transform 0.1s ease, color 0.3s;
-    will-change: transform;
   }
 
-  .unit.flip .value {
-    animation: flipDown 0.3s ease;
+  /* Top and bottom static halves */
+  .flip-card .top,
+  .flip-card .bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50%;
+    overflow: hidden;
+    background: var(--card-top);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  @keyframes flipDown {
-    0%   { transform: translateY(-6px); opacity: 0.4; }
-    100% { transform: translateY(0);    opacity: 1; }
+  .flip-card .top {
+    top: 0;
+    border-radius: 6px 6px 0 0;
+    border-bottom: 1px solid var(--card-divider);
+    align-items: flex-end;
+    padding-bottom: 0;
   }
 
-  .label {
+  .flip-card .top span {
+    transform: translateY(50%);
+  }
+
+  .flip-card .bottom {
+    bottom: 0;
+    background: var(--card-bot);
+    border-radius: 0 0 6px 6px;
+    align-items: flex-start;
+    padding-top: 0;
+  }
+
+  .flip-card .bottom span {
+    transform: translateY(-50%);
+  }
+
+  /* Flip panels (animated) */
+  .flip-card .flip-top,
+  .flip-card .flip-bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+  }
+
+  .flip-card .flip-top {
+    top: 0;
+    background: var(--card-top);
+    border-radius: 6px 6px 0 0;
+    border-bottom: 1px solid var(--card-divider);
+    transform-origin: bottom center;
+    z-index: 2;
+    align-items: flex-end;
+  }
+
+  .flip-card .flip-top span {
+    transform: translateY(50%);
+  }
+
+  .flip-card .flip-bottom {
+    bottom: 0;
+    background: var(--card-bot);
+    border-radius: 0 0 6px 6px;
+    transform-origin: top center;
+    transform: rotateX(90deg);
+    z-index: 2;
+    align-items: flex-start;
+  }
+
+  .flip-card .flip-bottom span {
+    transform: translateY(-50%);
+  }
+
+  /* Shadow overlay on bottom half during flip */
+  .flip-card .flip-shadow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: rgba(0,0,0,0);
+    border-radius: 0 0 6px 6px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Flip animation */
+  .flip-card.flipping .flip-top {
+    animation: flipTopDown 0.5s ease-in forwards;
+  }
+
+  .flip-card.flipping .flip-bottom {
+    animation: flipBottomUp 0.5s 0.25s ease-out forwards;
+  }
+
+  .flip-card.flipping .flip-shadow {
+    animation: shadowPulse 0.5s ease-in forwards;
+  }
+
+  @keyframes flipTopDown {
+    0%   { transform: rotateX(0deg); }
+    100% { transform: rotateX(-90deg); }
+  }
+
+  @keyframes flipBottomUp {
+    0%   { transform: rotateX(90deg); }
+    100% { transform: rotateX(0deg); }
+  }
+
+  @keyframes shadowPulse {
+    0%   { background: rgba(0,0,0,0); }
+    50%  { background: rgba(0,0,0,0.25); }
+    100% { background: rgba(0,0,0,0); }
+  }
+
+  .flip-label {
     font-size: 9px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
     font-weight: 600;
+  }
+
+  .flip-separator {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 36px;
+    color: var(--border);
+    margin-top: -12px;
+    user-select: none;
   }
 
   /* ── Progress bar ── */
@@ -257,7 +374,13 @@
   .widget.is-expired .expired-banner { display: block; }
   .widget.is-expired .dot { background: var(--accent2); box-shadow: 0 0 8px var(--accent2); animation: none; }
   .widget.is-expired .progress-fill { background: var(--accent2); }
-  .widget.is-expired .unit::before { background: var(--accent2); opacity: 1; }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    .countdown { gap: 8px; padding: 20px 12px; }
+    .flip-card { width: 52px; height: 60px; font-size: 30px; }
+    .flip-separator { font-size: 24px; }
+  }
 </style>
 </head>
 <body>
@@ -269,16 +392,57 @@
       <div class="dot" id="dot"></div>
       <input class="title-input" id="titleInput" type="text" value="Sprint End" maxlength="40" placeholder="Enter label…" />
     </div>
-    <button class="btn-settings" onclick="toggleFooter()">⚙ Set Target</button>
+    <button class="btn-settings" onclick="toggleFooter()">&#9881; Set Target</button>
   </div>
 
   <div class="countdown" id="countdown">
-    <div class="unit" id="u-months"><span class="value" id="v-months">00</span><span class="label">Months</span></div>
-    <div class="unit" id="u-weeks"> <span class="value" id="v-weeks">00</span> <span class="label">Weeks</span></div>
-    <div class="unit" id="u-days">  <span class="value" id="v-days">00</span>  <span class="label">Days</span></div>
-    <div class="unit" id="u-hours"> <span class="value" id="v-hours">00</span> <span class="label">Hours</span></div>
-    <div class="unit" id="u-mins">  <span class="value" id="v-mins">00</span>  <span class="label">Mins</span></div>
-    <div class="unit" id="u-secs">  <span class="value" id="v-secs">00</span>  <span class="label">Secs</span></div>
+    <div class="flip-group">
+      <div class="flip-card" id="fc-months" data-value="00">
+        <div class="top"><span>00</span></div>
+        <div class="bottom"><span>00</span></div>
+      </div>
+      <span class="flip-label">Months</span>
+    </div>
+    <span class="flip-separator">:</span>
+    <div class="flip-group">
+      <div class="flip-card" id="fc-weeks" data-value="00">
+        <div class="top"><span>00</span></div>
+        <div class="bottom"><span>00</span></div>
+      </div>
+      <span class="flip-label">Weeks</span>
+    </div>
+    <span class="flip-separator">:</span>
+    <div class="flip-group">
+      <div class="flip-card" id="fc-days" data-value="00">
+        <div class="top"><span>00</span></div>
+        <div class="bottom"><span>00</span></div>
+      </div>
+      <span class="flip-label">Days</span>
+    </div>
+    <span class="flip-separator">:</span>
+    <div class="flip-group">
+      <div class="flip-card" id="fc-hours" data-value="00">
+        <div class="top"><span>00</span></div>
+        <div class="bottom"><span>00</span></div>
+      </div>
+      <span class="flip-label">Hours</span>
+    </div>
+    <span class="flip-separator">:</span>
+    <div class="flip-group">
+      <div class="flip-card" id="fc-mins" data-value="00">
+        <div class="top"><span>00</span></div>
+        <div class="bottom"><span>00</span></div>
+      </div>
+      <span class="flip-label">Mins</span>
+    </div>
+    <span class="flip-separator">:</span>
+    <div class="flip-group">
+      <div class="flip-card" id="fc-secs" data-value="00">
+        <div class="top"><span>00</span></div>
+        <div class="bottom"><span>00</span></div>
+      </div>
+      <span class="flip-label">Secs</span>
+    </div>
   </div>
 
   <div class="progress-row">
@@ -297,7 +461,7 @@
     <button class="btn-set" onclick="applyTarget()">Set</button>
   </div>
 
-  <div class="expired-banner">⚑ Deadline reached</div>
+  <div class="expired-banner">&#9873; Deadline reached</div>
 </div>
 
 <script>
@@ -306,7 +470,6 @@
 
   let targetDate = null;
   let startDate  = null;
-  let prev = {};
 
   // ── Load persisted state ──
   try {
@@ -346,15 +509,51 @@
     tick();
   }
 
-  // ── Animate changed units ──
-  function flashUnit(id, val) {
-    if (prev[id] === val) return;
-    prev[id] = val;
-    const u = document.getElementById('u-' + id);
-    u.classList.remove('flip', 'ticking');
-    void u.offsetWidth;
-    u.classList.add('flip', 'ticking');
-    document.getElementById('v-' + id).textContent = val;
+  // ── Flip a card to a new value ──
+  function flipTo(id, newVal) {
+    const card = document.getElementById('fc-' + id);
+    const oldVal = card.getAttribute('data-value');
+    if (oldVal === newVal) return;
+
+    card.setAttribute('data-value', newVal);
+
+    // Static halves show the new value underneath
+    card.querySelector('.top span').textContent = newVal;
+    card.querySelector('.bottom span').textContent = newVal;
+
+    // Remove any previous flip panels
+    card.querySelectorAll('.flip-top, .flip-bottom, .flip-shadow').forEach(el => el.remove());
+    card.classList.remove('flipping');
+
+    // Create flip-top (shows old value, flips away)
+    const flipTop = document.createElement('div');
+    flipTop.className = 'flip-top';
+    flipTop.innerHTML = '<span>' + oldVal + '</span>';
+
+    // Create flip-bottom (shows new value, flips in)
+    const flipBot = document.createElement('div');
+    flipBot.className = 'flip-bottom';
+    flipBot.innerHTML = '<span>' + newVal + '</span>';
+
+    // Shadow overlay
+    const shadow = document.createElement('div');
+    shadow.className = 'flip-shadow';
+
+    card.appendChild(flipTop);
+    card.appendChild(flipBot);
+    card.appendChild(shadow);
+
+    // Trigger animation
+    void card.offsetWidth;
+    card.classList.add('flipping');
+
+    // Cleanup after animation
+    setTimeout(() => {
+      card.classList.remove('flipping');
+      flipTop.remove();
+      flipBot.remove();
+      shadow.remove();
+    }, 800);
   }
 
   function tick() {
@@ -365,7 +564,7 @@
 
     if (diff <= 0) {
       ['months','weeks','days','hours','mins','secs'].forEach(k => {
-        document.getElementById('v-' + k).textContent = '00';
+        flipTo(k, '00');
       });
       document.getElementById('widget').classList.add('is-expired');
       document.getElementById('progressFill').style.width = '100%';
@@ -389,12 +588,12 @@
     rem -= mins   * (1000 * 60);
     const secs   = Math.floor(rem / 1000);
 
-    flashUnit('months', PAD(months));
-    flashUnit('weeks',  PAD(weeks));
-    flashUnit('days',   PAD(days));
-    flashUnit('hours',  PAD(hours));
-    flashUnit('mins',   PAD(mins));
-    flashUnit('secs',   PAD(secs));
+    flipTo('months', PAD(months));
+    flipTo('weeks',  PAD(weeks));
+    flipTo('days',   PAD(days));
+    flipTo('hours',  PAD(hours));
+    flipTo('mins',   PAD(mins));
+    flipTo('secs',   PAD(secs));
 
     // Progress bar
     if (startDate) {
