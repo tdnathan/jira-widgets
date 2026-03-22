@@ -505,16 +505,21 @@
     if (oldChar === newChar) return;
 
     card.setAttribute('data-value', newChar);
+
+    // Update top static half to new value (revealed as flip-top peels away)
     card.querySelector('.top span').textContent = newChar;
-    card.querySelector('.bottom span').textContent = newChar;
+    // Keep bottom static half showing OLD value until flip-bottom covers it
+    const bottomSpan = card.querySelector('.bottom span');
 
     card.querySelectorAll('.flip-top, .flip-bottom, .flip-shadow').forEach(el => el.remove());
     card.classList.remove('flipping');
 
+    // flip-top: shows old value, hinges down to reveal new top
     const ft = document.createElement('div');
     ft.className = 'flip-top';
     ft.innerHTML = '<span>' + oldChar + '</span>';
 
+    // flip-bottom: shows new value, rotates in to cover old bottom
     const fb = document.createElement('div');
     fb.className = 'flip-bottom';
     fb.innerHTML = '<span>' + newChar + '</span>';
@@ -529,12 +534,15 @@
     void card.offsetWidth;
     card.classList.add('flipping');
 
+    // Update bottom static half only after flip-bottom has fully landed
+    // flip-bottom: 0.22s delay + 0.45s duration = 0.67s
     setTimeout(() => {
+      bottomSpan.textContent = newChar;
       card.classList.remove('flipping');
       ft.remove();
       fb.remove();
       sh.remove();
-    }, 700);
+    }, 680);
   }
 
   // ── Set digits for a group ──
